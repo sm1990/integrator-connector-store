@@ -31,15 +31,18 @@ import {
 } from '@wso2/oxygen-ui';
 import { ChevronDown as ExpandMoreIcon } from '@wso2/oxygen-ui-icons-react';
 import { FilterOptions } from '@/types/connector';
+import SearchBar from '@/components/SearchBar';
 
 interface FilterSidebarProps {
   filterOptions: FilterOptions;
   selectedAreas: string[];
   selectedVendors: string[];
   selectedTypes: string[];
+  searchQuery: string;
   onAreaChange: (area: string) => void;
   onVendorChange: (vendor: string) => void;
   onTypeChange: (type: string) => void;
+  onSearchChange: (query: string) => void;
   onClearAll: () => void;
 }
 
@@ -48,9 +51,11 @@ export default function FilterSidebar({
   selectedAreas,
   selectedVendors,
   selectedTypes,
+  searchQuery,
   onAreaChange,
   onVendorChange,
   onTypeChange,
+  onSearchChange,
   onClearAll,
 }: FilterSidebarProps) {
   const totalFiltersActive = selectedAreas.length + selectedVendors.length + selectedTypes.length;
@@ -79,35 +84,30 @@ export default function FilterSidebar({
   }, [filterOptions]);
 
   return (
-    <Box sx={{ position: 'sticky', top: 24 }}>
-      {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Filters
-        </Typography>
-        {totalFiltersActive > 0 && (
-          <Chip
-            label={totalFiltersActive.toString()}
-            size="small"
-            color="primary"
-            onDelete={onClearAll}
-            deleteIcon={
-              <Box component="span" sx={{ fontSize: '0.75rem', ml: 0.5 }}>
-                ✕
-              </Box>
-            }
-            sx={{ fontWeight: 600 }}
-          />
-        )}
+    <Paper
+      elevation={0}
+      sx={{
+        position: 'sticky',
+        top: 88,
+        borderRadius: '8px',
+        border: 1,
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+        p: 2,
+      }}
+    >
+      {/* Search Bar */}
+      <Box mb={2}>
+        <SearchBar value={searchQuery} onChange={onSearchChange} />
       </Box>
 
       {/* Area Filter */}
-      <Paper
-        elevation={0}
+      <Box
         sx={{
-          mb: 2,
-          borderRadius: 2,
-          overflow: 'hidden',
+          mb: 1.5,
+          borderRadius: '8px',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : '#F5F5F5',
         }}
       >
         <Accordion
@@ -118,18 +118,26 @@ export default function FilterSidebar({
             '&:before': {
               display: 'none',
             },
+            backgroundColor: 'transparent',
+            border: 'none',
           }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             sx={{
-              px: 2,
-              minHeight: 48,
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              p: 1.5,
+              minHeight: 36,
+              alignItems: 'center',
+              '& .MuiAccordionSummary-content': {
+                margin: 0,
+              },
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
             }}
           >
-            <Typography sx={{ fontWeight: 600 }}>
+            <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
               Area {selectedAreas.length > 0 && `(${selectedAreas.length})`}
             </Typography>
           </AccordionSummary>
@@ -137,10 +145,10 @@ export default function FilterSidebar({
             <AccordionDetails
               ref={areaScrollRef}
               sx={{
-                px: 2,
-                pt: 1,
-                pb: 2,
-                maxHeight: '300px',
+                px: 1.5,
+                pt: 0,
+                pb: 1.5,
+                maxHeight: '192px',
                 overflowY: 'auto',
               }}
             >
@@ -152,10 +160,25 @@ export default function FilterSidebar({
                       <Checkbox
                         checked={selectedAreas.includes(area)}
                         onChange={() => onAreaChange(area)}
-                        size="small"
+                        sx={{
+                          '& .MuiSvgIcon-root': { fontSize: 16 },
+                          color: '#52525B',
+                          '&.Mui-checked': { color: '#FF7300' },
+                        }}
                       />
                     }
-                    label={<Typography variant="body2">{area}</Typography>}
+                    label={<Typography sx={{ fontSize: '0.875rem' }}>{area}</Typography>}
+                    sx={{
+                      mx: 0,
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: (theme) =>
+                          theme.palette.mode === 'dark' ? '#3F3F46' : '#E5E7EB',
+                      },
+                    }}
                   />
                 ))}
               </FormGroup>
@@ -178,115 +201,44 @@ export default function FilterSidebar({
             )}
           </Box>
         </Accordion>
-      </Paper>
-
-      {/* Vendor Filter */}
-      <Paper
-        elevation={0}
-        sx={{
-          mb: 2,
-          borderRadius: 2,
-          overflow: 'hidden',
-        }}
-      >
-        <Accordion
-          defaultExpanded
-          disableGutters
-          elevation={0}
-          sx={{
-            '&:before': {
-              display: 'none',
-            },
-          }}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            sx={{
-              px: 2,
-              minHeight: 48,
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-            }}
-          >
-            <Typography sx={{ fontWeight: 600 }}>
-              Vendor {selectedVendors.length > 0 && `(${selectedVendors.length})`}
-            </Typography>
-          </AccordionSummary>
-          <Box sx={{ position: 'relative' }}>
-            <AccordionDetails
-              ref={vendorScrollRef}
-              sx={{
-                px: 2,
-                pt: 1,
-                pb: 2,
-                maxHeight: '300px',
-                overflowY: 'auto',
-              }}
-            >
-              <FormGroup>
-                {filterOptions.vendors.map((vendor) => (
-                  <FormControlLabel
-                    key={vendor}
-                    control={
-                      <Checkbox
-                        checked={selectedVendors.includes(vendor)}
-                        onChange={() => onVendorChange(vendor)}
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="body2">{vendor}</Typography>}
-                  />
-                ))}
-              </FormGroup>
-            </AccordionDetails>
-            {showVendorScroll && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: '40px',
-                  background: (theme) =>
-                    theme.palette.mode === 'dark'
-                      ? 'linear-gradient(to bottom, transparent, rgba(26, 26, 26, 0.9))'
-                      : 'linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9))',
-                  pointerEvents: 'none',
-                }}
-              />
-            )}
-          </Box>
-        </Accordion>
-      </Paper>
+      </Box>
 
       {/* Type Filter */}
-      <Paper
-        elevation={0}
+      <Box
         sx={{
-          borderRadius: 2,
-          overflow: 'hidden',
+          mb: 1.5,
+          borderRadius: '8px',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(39, 39, 42, 0.5)' : '#F9FAFB',
         }}
       >
         <Accordion
-          defaultExpanded
           disableGutters
           elevation={0}
           sx={{
             '&:before': {
               display: 'none',
             },
+            backgroundColor: 'transparent',
+            border: 'none',
           }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             sx={{
-              px: 2,
-              minHeight: 48,
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              p: 1.5,
+              minHeight: 36,
+              alignItems: 'center',
+              '& .MuiAccordionSummary-content': {
+                margin: 0,
+              },
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
             }}
           >
-            <Typography sx={{ fontWeight: 600 }}>
+            <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
               Type {selectedTypes.length > 0 && `(${selectedTypes.length})`}
             </Typography>
           </AccordionSummary>
@@ -294,10 +246,10 @@ export default function FilterSidebar({
             <AccordionDetails
               ref={typeScrollRef}
               sx={{
-                px: 2,
-                pt: 1,
-                pb: 2,
-                maxHeight: '300px',
+                px: 1.5,
+                pt: 0,
+                pb: 1.5,
+                maxHeight: '192px',
                 overflowY: 'auto',
               }}
             >
@@ -309,10 +261,25 @@ export default function FilterSidebar({
                       <Checkbox
                         checked={selectedTypes.includes(type)}
                         onChange={() => onTypeChange(type)}
-                        size="small"
+                        sx={{
+                          '& .MuiSvgIcon-root': { fontSize: 16 },
+                          color: '#52525B',
+                          '&.Mui-checked': { color: '#FF7300' },
+                        }}
                       />
                     }
-                    label={<Typography variant="body2">{type}</Typography>}
+                    label={<Typography sx={{ fontSize: '0.875rem' }}>{type}</Typography>}
+                    sx={{
+                      mx: 0,
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: (theme) =>
+                          theme.palette.mode === 'dark' ? '#3F3F46' : '#E5E7EB',
+                      },
+                    }}
                   />
                 ))}
               </FormGroup>
@@ -335,7 +302,108 @@ export default function FilterSidebar({
             )}
           </Box>
         </Accordion>
-      </Paper>
-    </Box>
+      </Box>
+
+      {/* Vendor Filter */}
+      <Box
+        sx={{
+          mb: 0,
+          borderRadius: '8px',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(39, 39, 42, 0.5)' : '#F9FAFB',
+        }}
+      >
+        <Accordion
+          disableGutters
+          elevation={0}
+          sx={{
+            '&:before': {
+              display: 'none',
+            },
+            backgroundColor: 'transparent',
+            border: 'none',
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            sx={{
+              p: 1.5,
+              minHeight: 36,
+              alignItems: 'center',
+              '& .MuiAccordionSummary-content': {
+                margin: 0,
+              },
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            }}
+          >
+            <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+              Vendor {selectedVendors.length > 0 && `(${selectedVendors.length})`}
+            </Typography>
+          </AccordionSummary>
+          <Box sx={{ position: 'relative' }}>
+            <AccordionDetails
+              ref={vendorScrollRef}
+              sx={{
+                px: 1.5,
+                pt: 0,
+                pb: 1.5,
+                maxHeight: '192px',
+                overflowY: 'auto',
+              }}
+            >
+              <FormGroup>
+                {filterOptions.vendors.map((vendor) => (
+                  <FormControlLabel
+                    key={vendor}
+                    control={
+                      <Checkbox
+                        checked={selectedVendors.includes(vendor)}
+                        onChange={() => onVendorChange(vendor)}
+                        sx={{
+                          '& .MuiSvgIcon-root': { fontSize: 16 },
+                          color: '#52525B',
+                          '&.Mui-checked': { color: '#FF7300' },
+                        }}
+                      />
+                    }
+                    label={<Typography sx={{ fontSize: '0.875rem' }}>{vendor}</Typography>}
+                    sx={{
+                      mx: 0,
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: (theme) =>
+                          theme.palette.mode === 'dark' ? '#3F3F46' : '#E5E7EB',
+                      },
+                    }}
+                  />
+                ))}
+              </FormGroup>
+            </AccordionDetails>
+            {showVendorScroll && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '40px',
+                  background: (theme) =>
+                    theme.palette.mode === 'dark'
+                      ? 'linear-gradient(to bottom, transparent, rgba(26, 26, 26, 0.9))'
+                      : 'linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9))',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </Box>
+        </Accordion>
+      </Box>
+    </Paper>
   );
 }

@@ -25,8 +25,10 @@ describe('Pagination', () => {
     currentPage: 1,
     totalItems: 100,
     pageSize: 30,
+    sortBy: 'pullCount-desc' as const,
     onPageChange: jest.fn(),
     onPageSizeChange: jest.fn(),
+    onSortChange: jest.fn(),
   };
 
   beforeEach(() => {

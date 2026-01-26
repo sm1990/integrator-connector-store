@@ -42,13 +42,31 @@ export default function SearchBar({
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchIcon size={18} />
+            <SearchIcon size={20} />
           </InputAdornment>
         ),
       }}
       sx={{
         '& .MuiOutlinedInput-root': {
-          backgroundColor: 'background.paper',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#F5F5F5',
+          borderRadius: '8px',
+          '& fieldset': {
+            borderColor: 'transparent',
+          },
+          '&:hover fieldset': {
+            borderColor: 'divider',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: 'primary.main',
+            borderWidth: '1px',
+          },
+        },
+        '& .MuiOutlinedInput-input': {
+          padding: '10px 14px',
+        },
+        '& .MuiInputAdornment-root': {
+          color: 'text.secondary',
         },
       }}
     />

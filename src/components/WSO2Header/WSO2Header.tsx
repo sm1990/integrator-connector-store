@@ -36,13 +36,14 @@ export default function WSO2Header() {
     >
       <Box
         sx={{
-          maxWidth: '1280px',
+          maxWidth: '1440px',
           margin: '0 auto',
           px: { xs: 2, sm: 3 },
           py: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          gap: 3,
         }}
       >
         {/* Left side - WSO2 Logo */}
@@ -59,8 +60,8 @@ export default function WSO2Header() {
           </a>
         </Box>
 
-        {/* Right side - Color Scheme Toggle */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* Right side - Actions */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <ColorSchemeToggle />
         </Box>
       </Box>

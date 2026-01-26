@@ -17,18 +17,21 @@
 */
 
 import React from 'react';
-import { Box, Select, MenuItem, Typography, Button, FormControl, InputLabel } from '@wso2/oxygen-ui';
+import { Box, Select, MenuItem, Typography, Button, FormControl } from '@wso2/oxygen-ui';
 import {
   ChevronLeft as NavigateBeforeIcon,
   ChevronRight as NavigateNextIcon,
 } from '@wso2/oxygen-ui-icons-react';
+import { SortOption } from '@/lib/connector-utils';
 
 interface PaginationProps {
   currentPage: number;
   totalItems: number;
   pageSize: number;
+  sortBy: SortOption;
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
+  onSortChange: (sort: SortOption) => void;
   pageSizeOptions?: number[];
 }
 
@@ -36,8 +39,10 @@ export default function Pagination({
   currentPage,
   totalItems,
   pageSize,
+  sortBy,
   onPageChange,
   onPageSizeChange,
+  onSortChange,
   pageSizeOptions = [10, 30, 50, 100],
 }: PaginationProps) {
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -101,42 +106,96 @@ export default function Pagination({
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: 2,
-        mt: 4,
-        pt: 3,
-        borderTop: 1,
+        backgroundColor: 'background.paper',
+        borderRadius: '8px',
+        px: 1.5,
+        py: 1,
+        border: 1,
         borderColor: 'divider',
       }}
     >
-      {/* Items per page selector */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Per page</InputLabel>
-          <Select
-            value={pageSize}
-            label="Per page"
-            onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          >
-            {pageSizeOptions.map((size) => (
-              <MenuItem key={size} value={size}>
-                {size} items
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Typography variant="body2" color="text.secondary">
+      {/* Left side - Per page, Showing, and Sort by */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+        {/* Per page */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" sx={{ whiteSpace: 'nowrap', color: '#71717A' }}>
+            Per page
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 100 }}>
+            <Select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              displayEmpty
+              sx={{
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'divider',
+                },
+              }}
+            >
+              {pageSizeOptions.map((size) => (
+                <MenuItem key={size} value={size}>
+                  {size} Items
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+        {/* Showing info */}
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            whiteSpace: 'nowrap', 
+            color: 'text.secondary'
+          }}
+        >
           Showing {startItem}-{endItem} of {totalItems}
         </Typography>
+
+        {/* Sort by */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" sx={{ whiteSpace: 'nowrap', color: '#71717A' }}>
+            Sort by
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <Select
+              value={sortBy}
+              onChange={(e) => onSortChange(e.target.value as SortOption)}
+              displayEmpty
+              sx={{
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'divider',
+                },
+              }}
+            >
+              <MenuItem value="pullCount-desc">Most Popular</MenuItem>
+              <MenuItem value="pullCount-asc">Least Popular</MenuItem>
+              <MenuItem value="name-asc">Name (A-Z)</MenuItem>
+              <MenuItem value="name-desc">Name (Z-A)</MenuItem>
+              <MenuItem value="date-desc">Newest First</MenuItem>
+              <MenuItem value="date-asc">Oldest First</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
-      {/* Page navigation */}
+      {/* Right side - Page navigation */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Button
           size="small"
           onClick={handlePrevious}
           disabled={currentPage === 1}
-          startIcon={<NavigateBeforeIcon />}
-          sx={{ minWidth: 'auto' }}
+          variant="text"
+          sx={{ 
+            minWidth: 'auto',
+            textTransform: 'none',
+            color: currentPage === 1 ? 'text.disabled' : 'text.secondary',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }}
         >
+          <NavigateBeforeIcon size={20} />
           Previous
         </Button>
 
@@ -157,11 +216,25 @@ export default function Pagination({
               ) : (
                 <Button
                   size="small"
-                  variant={currentPage === page ? 'contained' : 'outlined'}
+                  variant={currentPage === page ? 'contained' : 'text'}
                   onClick={() => onPageChange(page as number)}
                   sx={{
                     minWidth: '40px',
                     px: 1,
+                    borderRadius: 1,
+                    ...(currentPage === page && {
+                      backgroundColor: '#FF7300',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#E66700',
+                      },
+                    }),
+                    ...currentPage !== page && {
+                      color: 'text.primary',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    },
                   }}
                 >
                   {page}
@@ -175,10 +248,18 @@ export default function Pagination({
           size="small"
           onClick={handleNext}
           disabled={currentPage === totalPages}
-          endIcon={<NavigateNextIcon />}
-          sx={{ minWidth: 'auto' }}
+          variant="text"
+          sx={{ 
+            minWidth: 'auto',
+            textTransform: 'none',
+            color: currentPage === totalPages ? 'text.disabled' : 'text.secondary',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }}
         >
           Next
+          <NavigateNextIcon size={20} />
         </Button>
       </Box>
     </Box>

@@ -18,17 +18,14 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Container, Box, Typography, CircularProgress, Alert } from '@wso2/oxygen-ui';
+import { Box, Typography, CircularProgress, Alert, useColorScheme } from '@wso2/oxygen-ui';
+import { Zap, Shield, Globe } from '@wso2/oxygen-ui-icons-react';
 import { BallerinaPackage, FilterOptions } from '@/types/connector';
 import { searchPackages, fetchFiltersProgressively, SortOption } from '@/lib/rest-client';
 import ConnectorCard from '@/components/ConnectorCard';
 import FilterSidebar from '@/components/FilterSidebar';
-import SearchBar from '@/components/SearchBar';
-import SortSelector from '@/components/SortSelector';
 import Pagination from '@/components/Pagination';
 import WSO2Header from '@/components/WSO2Header';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // Valid sort options for validation
 const VALID_SORT_OPTIONS: SortOption[] = [
@@ -84,6 +81,10 @@ function parseSortParam(value: string | null): SortOption {
 
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { mode, systemMode } = useColorScheme();
+  
+  // Resolve the actual mode: if mode is 'system', use systemMode
+  const resolvedMode = mode === 'system' ? systemMode : mode;
 
   const [connectors, setConnectors] = useState<BallerinaPackage[]>([]);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
@@ -256,89 +257,108 @@ export default function HomePage() {
       {/* WSO2 Header */}
       <WSO2Header />
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        {/* WSO2 Integrator Brand Section */}
-        <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-          {/* WSO2 Integrator Logo with Icon + Text */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <LazyLoadImage
-              src="/images/wso2-integrator-correct.svg"
-              alt="WSO2 Integrator logo"
-              width={40}
-              height={40}
-              effect="opacity"
-              style={{ display: 'block' }}
-            />
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 600,
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                letterSpacing: '0.008rem',
-              }}
-            >
-              WSO
-              <Box component="span" sx={{ fontSize: '0.7em', verticalAlign: 'sub' }}>
-                2
-              </Box>{' '}
-              Integrator
-            </Typography>
-          </Box>
-
-          {/* Separator and Connector Store */}
+      {/* Hero Section */}
+      <Box
+        key={`hero-${resolvedMode}`}
+        sx={{
+          borderBottom: 1,
+          borderColor: resolvedMode === 'dark' ? '#27272A' : '#E5E7EB',
+          background:
+            resolvedMode === 'dark'
+              ? 'linear-gradient(to right, #18181B, #18181B, rgba(255, 115, 0, 0.1))'
+              : 'linear-gradient(to right, #F3F4F6, #FFFFFF, #FFF7ED)',
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: '1440px',
+            margin: '0 auto',
+            px: { xs: 2, sm: 3 },
+            py: { xs: 5, md: 5 },
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 2,
+              justifyContent: 'space-between',
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: { xs: 3, md: 0 },
             }}
           >
+            {/* Left side - Title and Description */}
+            <Box>
+              <Typography
+                variant="h3"
+                component="h1"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: '1.875rem', sm: '2rem', md: '2.25rem' },
+                  fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  color: resolvedMode === 'dark' ? '#FFFFFF' : 'inherit',
+                }}
+              >
+                Connector Store
+              </Typography>
+              <Typography
+                sx={{
+                  mt: 1,
+                  color: resolvedMode === 'dark' ? '#A1A1AA' : '#52525B',
+                  fontSize: '1rem',
+                }}
+              >
+                Discover and integrate with 100+ pre-built connectors for enterprise platforms
+              </Typography>
+            </Box>
+
+            {/* Right side - Feature Badges (hidden on mobile) */}
             <Box
               sx={{
-                width: '1px',
-                height: '32px',
-                backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#444' : '#ddd'),
-              }}
-            />
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 600,
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                letterSpacing: '0.008rem',
+                display: { xs: 'none', md: 'flex' },
+                gap: 4,
+                color: resolvedMode === 'dark' ? '#A1A1AA' : '#52525B',
               }}
             >
-              Connector Store
-            </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Zap
+                  color="#FF7300"
+                  size={20}
+                />
+                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                  Fast Integration
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Shield
+                  color="#FF7300"
+                  size={20}
+                />
+                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                  Enterprise Ready
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Globe
+                  color="#FF7300"
+                  size={20}
+                />
+                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                  Global Support
+                </Typography>
+              </Box>
+            </Box>
           </Box>
         </Box>
+      </Box>
 
-        {/* Description */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 800 }}>
-            Discover and integrate with 100+ pre-built connectors for popular services and
-            platforms. Accelerate your integration development with WSO2 Integrator.
-          </Typography>
-        </Box>
-
-        {/* Search and Sort Controls */}
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 2,
-            mb: 3,
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'stretch', sm: 'center' },
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box sx={{ flex: 1, maxWidth: { xs: '100%', sm: '500px' } }}>
-            <SearchBar value={searchQuery} onChange={setSearchQuery} />
-          </Box>
-          <Box sx={{ flexShrink: 0 }}>
-            <SortSelector value={sortBy} onChange={setSortBy} />
-          </Box>
-        </Box>
+      <Box
+        sx={{
+          maxWidth: '1440px',
+          margin: '0 auto',
+          px: { xs: 2, sm: 3 },
+          py: 4,
+        }}
+      >
 
         {/* Initial Loading State */}
         {initialLoading && (
@@ -351,15 +371,17 @@ export default function HomePage() {
         {!initialLoading && (
           <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
             {/* Filter Sidebar - Always visible */}
-            <Box sx={{ width: { xs: '100%', md: '300px' }, flexShrink: 0 }}>
+            <Box sx={{ width: { xs: '100%', md: '280px' }, flexShrink: 0 }}>
               <FilterSidebar
                 filterOptions={filterOptions}
                 selectedAreas={selectedAreas}
                 selectedVendors={selectedVendors}
                 selectedTypes={selectedTypes}
+                searchQuery={searchQuery}
                 onAreaChange={handleAreaChange}
                 onVendorChange={handleVendorChange}
                 onTypeChange={handleTypeChange}
+                onSearchChange={setSearchQuery}
                 onClearAll={handleClearAll}
               />
             </Box>
@@ -372,6 +394,23 @@ export default function HomePage() {
                   {error}
                 </Alert>
               )}
+
+              {/* Top Controls Bar */}
+              <Box
+                sx={{
+                  mb: 3,
+                }}
+              >
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={totalCount}
+                  pageSize={pageSize}
+                  sortBy={sortBy}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={setPageSize}
+                  onSortChange={setSortBy}
+                />
+              </Box>
 
               {totalCount === 0 && !loading ? (
                 <Box
@@ -414,15 +453,6 @@ export default function HomePage() {
                     </Box>
                   )}
 
-                  {/* Pagination - Top */}
-                  <Pagination
-                    currentPage={currentPage}
-                    totalItems={totalCount}
-                    pageSize={pageSize}
-                    onPageChange={setCurrentPage}
-                    onPageSizeChange={setPageSize}
-                  />
-
                   <Box
                     sx={{
                       display: 'grid',
@@ -432,7 +462,6 @@ export default function HomePage() {
                         lg: 'repeat(3, 1fr)',
                       },
                       gap: 3,
-                      mt: 4,
                       opacity: loading ? 0.5 : 1,
                       transition: 'opacity 0.2s',
                     }}
@@ -446,19 +475,23 @@ export default function HomePage() {
                   </Box>
 
                   {/* Pagination - Bottom */}
-                  <Pagination
-                    currentPage={currentPage}
-                    totalItems={totalCount}
-                    pageSize={pageSize}
-                    onPageChange={setCurrentPage}
-                    onPageSizeChange={setPageSize}
-                  />
+                  <Box sx={{ mt: 4 }}>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalItems={totalCount}
+                      pageSize={pageSize}
+                      sortBy={sortBy}
+                      onPageChange={setCurrentPage}
+                      onPageSizeChange={setPageSize}
+                      onSortChange={setSortBy}
+                    />
+                  </Box>
                 </Box>
               )}
             </Box>
           </Box>
         )}
-      </Container>
+      </Box>
     </>
   );
 }

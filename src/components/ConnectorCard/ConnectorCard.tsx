@@ -108,9 +108,17 @@ function ConnectorCard({ connector }: ConnectorCardProps) {
               sx={{
                 mb: 2,
                 minHeight: '40px',
+                fontSize: '0.875rem',
+                lineHeight: 1.43,
+                color: 'text.secondary',
                 '& p': {
                   margin: 0,
-                  fontSize: '0.8125rem',
+                  fontSize: '0.875rem',
+                  lineHeight: 1.43,
+                  color: 'text.secondary',
+                },
+                '& span': {
+                  fontSize: '0.875rem',
                   lineHeight: 1.43,
                   color: 'text.secondary',
                 },

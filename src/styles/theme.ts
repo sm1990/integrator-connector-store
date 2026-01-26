@@ -20,26 +20,42 @@
 
 import { createTheme } from '@wso2/oxygen-ui';
 
-// WSO2 Design Tokens - Exact colors from wso2.com/integrator
+// WSO2 Design Tokens - Exact colors from design system
 const wso2Colors = {
-  primary: '#ff7300', // WSO2 Orange (primary brand color)
-  primaryHover: '#ff7300',
+  primary: '#FF7300', // WSO2 Orange (primary brand color)
+  primaryHover: '#FF7300',
   black: '#000000', // Pure black for text and backgrounds
-  white: '#ffffff', // Pure white
+  white: '#FFFFFF', // Pure white
   background: {
-    light: '#f7f8fb', // Light gray background (from body)
-    dark: '#000000', // Black background for dark mode
-    paper: '#ffffff', // White for cards
+    light: '#F9FAFB', // Light gray background (gray-50)
+    dark: '#09090B', // Dark background (zinc-950)
+    paper: {
+      light: '#FFFFFF', // White for cards (light mode)
+      dark: '#18181B', // Zinc-900 for cards (dark mode)
+    },
+    sidebar: {
+      light: '#FFFFFF', // White sidebar (light mode)
+      dark: '#18181B', // Zinc-900 sidebar (dark mode)
+    },
+    filterSection: {
+      light: '#F9FAFB', // Gray-50 for filter sections (light mode)
+      dark: 'rgba(39, 39, 42, 0.5)', // Zinc-800 50% opacity (dark mode)
+    },
+    searchInput: {
+      light: '#F3F4F6', // Gray-100 for search input (light mode)
+      dark: '#27272A', // Zinc-800 for search input (dark mode)
+    },
   },
   text: {
     primary: '#000000', // Black text (headings)
     secondary: '#494848', // Gray text (paragraphs)
-    light: '#ffffff', // White text
-    dark: '#cccccc', // Light gray for dark mode secondary text
+    light: '#FFFFFF', // White text
+    dark: '#CCCCCC', // Light gray for dark mode secondary text
   },
   border: {
-    light: '#c6c6c6', // Border color from site
-    medium: '#ccc',
+    light: '#E5E7EB', // Gray-200 border
+    dark: '#27272A', // Zinc-800 border
+    medium: '#CCC',
   },
 };
 
@@ -119,13 +135,14 @@ export const lightTheme = createTheme({
       main: wso2Colors.primary,
     },
     background: {
-      default: wso2Colors.background.light,
-      paper: wso2Colors.white,
+      default: wso2Colors.background.light, // #F9FAFB (gray-50)
+      paper: wso2Colors.background.paper.light, // #FFFFFF
     },
     text: {
       primary: wso2Colors.text.primary,
       secondary: wso2Colors.text.secondary,
     },
+    divider: wso2Colors.border.light,
   },
 });
 
@@ -137,13 +154,13 @@ export const darkTheme = createTheme({
       main: wso2Colors.primary,
     },
     background: {
-      default: wso2Colors.background.dark, // Pure black like WSO2 site
-      paper: '#1a1a1a', // Slightly lighter for cards
+      default: wso2Colors.background.dark, // #09090B (zinc-950)
+      paper: wso2Colors.background.paper.dark, // #18181B (zinc-900)
     },
     text: {
       primary: wso2Colors.text.light, // White text
       secondary: wso2Colors.text.dark, // Light gray text
     },
-    divider: wso2Colors.border.medium,
+    divider: wso2Colors.border.dark,
   },
 });
